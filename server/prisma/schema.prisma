@@ -1,0 +1,470 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------
+// ENUMS
+// --------------------------
+enum UserRole {
+  ADMIN
+  USER
+  DOCTOR
+  RESCUER
+}
+
+enum AdoptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum PetStatus {
+  AVAILABLE
+  ADOPTED
+  PENDING
+  RESERVED
+}
+
+enum ConsultationStatus {
+  PENDING_PAYMENT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum RescueReportStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum RescueMissionStatus {
+  ASSIGNED
+  IN_PROGRESS
+  RESCUED
+  CLOSED
+}
+
+// --------------------------
+// USER
+// --------------------------
+model User {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         UserRole @default(USER)
+  isVerified   Boolean  @default(false)
+  imageUrl     String?
+
+  pets              Pet[]             @relation("UserPets")
+  adoptionRequests  AdoptionRequest[]
+  consultationsUser Consultation[]    @relation("UserConsultations")
+  rescueMissions    RescueMission[]   @relation("RescuerMissions")
+
+  messages      Message[]
+  orders        Order[]
+  payments      Payment[]
+  rescueReports RescueReport[]
+
+  eventRegistrations EventRegistration[]
+
+  doctor Doctor?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  blogs     Blog[]
+  wishlists Wishlist[]
+  cart      Cart?
+}
+
+model OTP {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// --------------------------
+// PET + ADOPTION
+// --------------------------
+model Pet {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation("UserPets", fields: [ownerId], references: [id])
+  ownerId Int
+
+  name         String
+  species      String
+  breed        String?
+  age          Int?
+  gender       String?
+  description  String?
+  imageUrl     String?
+  images       String[]  @default([])
+  isVaccinated Boolean   @default(false)
+  status       PetStatus @default(AVAILABLE)
+  adoptionFee  Int?      @default(0)
+  size         String?   // Small, Medium, Large
+  color        String?
+  healthStatus String?   // "Healthy", "Needs Care", etc.
+  neutered     Boolean   @default(false)
+
+  // Location Data
+  latitude     Float?
+  longitude    Float?
+  address      String?
+
+  adoptionRequests AdoptionRequest[]
+  consultations    Consultation?     @relation(fields: [consultationId], references: [id])
+
+  createdAt      DateTime   @default(now())
+  wishlists      Wishlist[]
+  consultationId Int?
+}
+
+model AdoptionRequest {
+  id    Int @id @default(autoincrement())
+  pet   Pet @relation(fields: [petId], references: [id])
+  petId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  status    AdoptionStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  
+  chat      Chat?
+
+  // Application Details
+  reason       String? 
+  experience   String?
+  livingSpace  String?
+  hasOtherPets Boolean? @default(false)
+
+  adminNotes   String?
+  reviewedAt   DateTime?
+}
+
+// --------------------------
+// DOCTOR + CONSULTATION + CHAT
+// --------------------------
+model Doctor {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  // Professional Information
+  specialization  String
+  experienceYears Int
+  fee             Int
+  licenseNumber   String  @unique
+  qualification   String // e.g., "DVM", "BVSc", "MVSc"
+
+  // Verification Documents
+  licenseDocUrl String? // Upload of veterinary license
+  degreeDocUrl  String? // Upload of degree certificate
+  photoUrl      String? // Professional photo
+
+  // Verification Status
+  isVerified         Boolean  @default(false)
+  verificationStatus String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  rejectionReason    String?
+  verifiedAt         DateTime?
+  verifiedBy         Int? // Admin user ID who verified
+
+  // Additional Info
+  bio            String?
+  clinicAddress  String?
+  availableDays  String? // JSON string: ["Monday", "Tuesday", ...]
+  availableHours String? // JSON string: {"start": "09:00", "end": "17:00"}
+  leaveDays      String[] @default([]) // Array of dates "YYYY-MM-DD"
+  available      Boolean @default(true)
+
+  consultations Consultation[]
+  prescriptions Prescription[]
+  payments      Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Consultation {
+  id     Int  @id @default(autoincrement())
+  user   User @relation("UserConsultations", fields: [userId], references: [id])
+  userId Int
+
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+  doctorId Int
+
+  petId Int?
+  
+  duration Int @default(30) // Duration in minutes
+  
+  appointmentDate DateTime? // Create slot reservation
+  
+  status ConsultationStatus @default(PENDING_PAYMENT)
+
+  chat          Chat?
+  prescriptions Prescription[]
+
+  createdAt DateTime @default(now())
+  pets      Pet[]
+
+  rating Int?
+  review String?
+}
+
+
+model Chat {
+  id             Int          @id @default(autoincrement())
+  
+  consultation   Consultation? @relation(fields: [consultationId], references: [id])
+  consultationId Int?          @unique
+
+  adoptionRequest AdoptionRequest? @relation(fields: [adoptionRequestId], references: [id])
+  adoptionRequestId Int?       @unique
+
+  messages  Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Message {
+  id     Int  @id @default(autoincrement())
+  chat   Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+
+  sender   User @relation(fields: [senderId], references: [id])
+  senderId Int
+
+  messageText String?
+  messageType String   @default("text")
+  createdAt   DateTime @default(now())
+}
+
+model Prescription {
+  id             Int          @id @default(autoincrement())
+  consultation   Consultation @relation(fields: [consultationId], references: [id])
+  consultationId Int
+
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+  doctorId Int
+
+  notes       String?
+  documentUrl String?
+
+  createdAt DateTime @default(now())
+}
+
+// --------------------------
+// PRODUCTS + ORDERS
+// --------------------------
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Int
+  stock       Int
+  category    String?
+  images      String[]
+  createdAt   DateTime @default(now())
+
+  cartItems CartItem[]
+  orderItems OrderItem[]
+  wishlists  Wishlist[]
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int        @unique
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  cartId    Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  totalAmount Int
+  status      OrderStatus @default(PENDING)
+
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+  paymentId Int?     @unique
+
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+}
+
+model OrderItem {
+  id      Int   @id @default(autoincrement())
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  quantity     Int
+  pricePerUnit Int
+}
+
+enum PaymentType {
+  CONSULTATION
+  DOCTOR_REGISTRATION
+  ORDER
+}
+
+model Payment {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  amount Int
+  method String // "ESEWA", "KHALTI", "CASH"
+  status PaymentStatus @default(PENDING)
+  type   PaymentType   @default(ORDER)
+  transactionId String?
+
+  order Order?
+  doctor Doctor? @relation(fields: [doctorId], references: [id])
+  doctorId Int?
+
+  createdAt DateTime @default(now())
+}
+
+
+// --------------------------
+// BLOG + EVENTS
+// --------------------------
+model Blog {
+  id       Int  @id @default(autoincrement())
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  title    String
+  content  String
+  imageUrl String?
+
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  imageUrl    String?
+
+  createdAt DateTime @default(now())
+
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id      Int   @id @default(autoincrement())
+  event   Event @relation(fields: [eventId], references: [id])
+  eventId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  createdAt DateTime @default(now())
+}
+
+// --------------------------
+// WISHLIST
+// --------------------------
+model Wishlist {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  pet   Pet? @relation(fields: [petId], references: [id])
+  petId Int?
+
+  product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+
+  createdAt DateTime @default(now())
+}
+
+// --------------------------
+// RESCUE SYSTEM
+// --------------------------
+model RescueReport {
+  id         Int  @id @default(autoincrement())
+  reporter   User @relation(fields: [reporterId], references: [id])
+  reporterId Int
+
+  description  String
+  imageUrl     String?
+  locationText String
+  status       RescueReportStatus @default(PENDING_REVIEW)
+
+  createdAt DateTime @default(now())
+
+  mission         RescueMission? @relation(fields: [rescueMissionId], references: [id])
+  rescueMissionId Int?
+}
+
+model RescueMission {
+  id       Int @id @default(autoincrement())
+  // report   RescueReport @relation(fields: [reportId], references: [id])
+  reportId Int
+
+  rescuer   User @relation("RescuerMissions", fields: [rescuerId], references: [id])
+  rescuerId Int
+
+  status RescueMissionStatus @default(ASSIGNED)
+  notes  String?
+
+  createdAt     DateTime       @default(now())
+  rescueReports RescueReport[]
+}
