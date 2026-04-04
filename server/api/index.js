@@ -3,24 +3,24 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import authRoutes from "./routes/authRoute/route.js";
-import petRoutes from "./routes/petRoutes.js";
-import adoptionRoutes from "./routes/adoptionRoutes.js";
-import storeRoutes from "./routes/storeRoutes.js";
-import doctorRoutes from "./routes/doctorRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
-import blogRoutes from "./routes/blogRoutes.js";
-import eventRoutes from "./routes/eventRoutes.js";
-import rescueRoutes from "./routes/rescueRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
-import cartRoutes from "./routes/cartRoutes.js";
-import orderRoutes from "./routes/orderRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
-import wishlistRoutes from "./routes/wishlistRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import aiRoutes from "./routes/aiRoutes.js";
-import campaignRoutes from "./routes/campaignRoutes.js";
+import authRoutes from "../routes/authRoute/route.js";
+import petRoutes from "../routes/petRoutes.js";
+import adoptionRoutes from "../routes/adoptionRoutes.js";
+import storeRoutes from "../routes/storeRoutes.js";
+import doctorRoutes from "../routes/doctorRoutes.js";
+import paymentRoutes from "../routes/paymentRoutes.js";
+import blogRoutes from "../routes/blogRoutes.js";
+import eventRoutes from "../routes/eventRoutes.js";
+import rescueRoutes from "../routes/rescueRoutes.js";
+import adminRoutes from "../routes/adminRoutes.js";
+import uploadRoutes from "../routes/uploadRoutes.js";
+import cartRoutes from "../routes/cartRoutes.js";
+import orderRoutes from "../routes/orderRoutes.js";
+import chatRoutes from "../routes/chatRoutes.js";
+import wishlistRoutes from "../routes/wishlistRoutes.js";
+import userRoutes from "../routes/userRoutes.js";
+import aiRoutes from "../routes/aiRoutes.js";
+import campaignRoutes from "../routes/campaignRoutes.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -129,7 +129,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-import startReminderService from "./services/reminderService.js";
+import startReminderService from "../services/reminderService.js";
 
 // ... existing imports ...
 
