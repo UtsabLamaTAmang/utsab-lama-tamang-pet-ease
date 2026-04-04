@@ -16,7 +16,8 @@ import {
     getDoctorProfile,
     updateAvailability,
     getDoctorSlots,
-    updateDoctorProfile
+    updateDoctorProfile,
+    getDoctorPatients
 } from "../controllers/doctorController.js";
 
 
@@ -53,6 +54,7 @@ router.patch("/consultations/:id/rate", protect, rateConsultation);
 
 // Doctor routes
 router.put("/availability", protect, updateAvailability);
+router.get("/patients", protect, getDoctorPatients);
 router.get("/:id/slots", getDoctorSlots);
 router.get("/", getAllDoctors);
 router.get("/:id", getDoctorById);

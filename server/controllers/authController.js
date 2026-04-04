@@ -83,6 +83,75 @@ export const register = async (req, res) => {
 };
 
 /**
+ * REGISTER RESCUER (Self-Signup)
+ */
+export const registerRescuer = async (req, res) => {
+  try {
+    const { fullName, email, phone, password } = req.body;
+
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+
+    if (existing) {
+      if (existing.isVerified) {
+        return res.status(400).json({ message: "Email already registered." });
+      }
+
+      const hashed = await bcrypt.hash(password, 10);
+      await prisma.user.update({
+        where: { email },
+        data: {
+          fullName: cleanString(fullName),
+          phone: phone || null,
+          passwordHash: hashed,
+          role: "RESCUER",
+        }
+      });
+    } else {
+      const hashed = await bcrypt.hash(password, 10);
+      await prisma.user.create({
+        data: {
+          fullName: cleanString(fullName),
+          email,
+          phone: phone || null,
+          passwordHash: hashed,
+          role: "RESCUER",
+          isVerified: false,
+        },
+      });
+    }
+
+    // Generate 6-digit OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Store OTP
+    await prisma.oTP.create({
+      data: {
+        email,
+        code: otpCode,
+        expiresAt,
+      },
+    });
+
+    // Send OTP Email
+    await sendOTP(email, otpCode);
+
+    return res.status(201).json({
+      message: "Rescuer registration successful. Please verify your email with the OTP sent.",
+      email: email,
+    });
+  } catch (err) {
+    console.error("Rescuer Register Error:", err);
+    const message = err.message || "Server error";
+    res.status(500).json({ message });
+  }
+};
+
+/**
  * LOGIN USER
  */
 export const login = async (req, res) => {
@@ -118,6 +187,7 @@ export const login = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        points: user.points,
       },
     });
   } catch (err) {
@@ -141,6 +211,7 @@ export const getMe = async (req, res) => {
         email: true,
         phone: true,
         role: true,
+        points: true,
         createdAt: true,
       },
     });
@@ -181,6 +252,46 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/**
+ * CHANGE PASSWORD
+ */
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new passwords are required." });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Verify current password
+    const match = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!match) {
+      return res.status(400).json({ message: "Incorrect current password." });
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Save new password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hashedNewPassword },
+    });
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error("Change Password Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 /**
  * VERIFY OTP
  */
@@ -224,6 +335,7 @@ export const verifyOTP = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        points: user.points,
       },
     });
   } catch (err) {

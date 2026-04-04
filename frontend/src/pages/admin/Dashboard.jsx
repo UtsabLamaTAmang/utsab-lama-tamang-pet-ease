@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
 });
 
 const fetchDashboardStats = async () => {
-    const response = await api.get('/admin/stats');
+    const response = await api.get('/admin/dashboard-stats');
     return response.data.stats;
 };
 

@@ -49,6 +49,15 @@ export const authAPI = {
         });
         return response.data;
     },
+    registerRescuer: async (fullName, email, phone, password) => {
+        const response = await api.post("/auth/register-rescuer", {
+            fullName,
+            email,
+            phone,
+            password,
+        });
+        return response.data;
+    },
 
     login: async (email, password) => {
         const response = await api.post("/auth/login", {
@@ -67,6 +76,14 @@ export const authAPI = {
         const response = await api.put("/auth/update-profile", {
             fullName,
             phone,
+        });
+        return response.data;
+    },
+
+    changePassword: async (currentPassword, newPassword) => {
+        const response = await api.put("/auth/change-password", {
+            currentPassword,
+            newPassword,
         });
         return response.data;
     },
@@ -251,11 +268,120 @@ export const userManager = {
     },
 };
 
+export const doctorAPI = {
+    getConsultations: async (status, date, search) => {
+        const response = await api.get("/doctors/consultations", { params: { status, date, search } });
+        return response.data;
+    },
+    createPrescription: async (data) => {
+        const response = await api.post("/doctors/prescriptions", data);
+        return response.data;
+    },
+    updateStatus: async (id, status) => {
+        const response = await api.patch(`/doctors/consultations/${id}/status`, { status });
+        return response.data;
+    }
+};
+
+export const adminAPI = {
+    verifyDoctor: async (doctorId, status) => {
+        const response = await api.patch(`/admin/doctors/${doctorId}/verify`, { status });
+        return response.data;
+    },
+    getAllUsers: async (params) => {
+        const response = await api.get("/admin/users", { params });
+        return response.data;
+    },
+    updateUserRole: async (userId, role) => {
+        const response = await api.patch(`/admin/users/${userId}/role`, { role });
+        return response.data;
+    },
+
+    toggleUserStatus: async (userId, isVerified) => {
+        const response = await api.patch(`/admin/users/${userId}/status`, { isVerified });
+        return response.data;
+    }
+};
+
 export const userAPI = {
     getPublicProfile: async (id) => {
         const response = await api.get(`/users/${id}/public-profile`);
         return response.data;
     }
+};
+
+export const rescueAPI = {
+    report: async (data) => {
+        const response = await api.post("/rescue/reports", data);
+        return response.data;
+    },
+    getMyReports: async (params) => {
+        const response = await api.get("/rescue/reports", { params });
+        return response.data;
+    },
+    getAvailable: async () => {
+        const response = await api.get("/rescue/reports/available");
+        return response.data;
+    },
+    getById: async (id) => {
+        const response = await api.get(`/rescue/reports/${id}`);
+        return response.data;
+    },
+    accept: async (reportId) => {
+        const response = await api.post(`/rescue/reports/${reportId}/accept`);
+        return response.data;
+    },
+    getMyMissions: async (params) => {
+        const response = await api.get("/rescue/missions/mine", { params });
+        return response.data;
+    },
+    complete: async (missionId, data) => {
+        const response = await api.patch(`/rescue/missions/${missionId}/complete`, data);
+        return response.data;
+    },
+    getBadges: async () => {
+        const response = await api.get("/rescue/badges");
+        return response.data;
+    },
+    getStats: async () => {
+        const response = await api.get("/rescue/rescuer/stats");
+        return response.data;
+    },
+    seedBadges: async () => {
+        const response = await api.post("/rescue/badges/seed");
+        return response.data;
+    },
+};
+
+export const campaignAPI = {
+    getAll: async (params) => {
+        const response = await api.get("/campaigns", { params });
+        return response.data;
+    },
+    getById: async (id) => {
+        const response = await api.get(`/campaigns/${id}`);
+        return response.data;
+    },
+    getDetails: async (id) => {
+        const response = await api.get(`/campaigns/${id}/details`);
+        return response.data;
+    },
+    donate: async (id, amount) => {
+        const response = await api.post(`/campaigns/${id}/donate`, { amount });
+        return response.data;
+    },
+    create: async (data) => {
+        const response = await api.post("/campaigns", data);
+        return response.data;
+    },
+    update: async (id, data) => {
+        const response = await api.put(`/campaigns/${id}`, data);
+        return response.data;
+    },
+    delete: async (id) => {
+        const response = await api.delete(`/campaigns/${id}`);
+        return response.data;
+    },
 };
 
 export default api;

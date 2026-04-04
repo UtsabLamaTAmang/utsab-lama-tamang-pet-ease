@@ -23,7 +23,9 @@ import {
     Activity,
     Info,
     User,
-    Trash2
+    Trash2,
+    Pill,
+    FileText
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -244,6 +246,59 @@ export default function PetDetails() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Prescriptions Section */}
+                        {pet.prescriptions && pet.prescriptions.length > 0 && (
+                            <div className="bg-neutral-50 rounded-2xl p-8 border border-neutral-100">
+                                <h3 className="text-lg font-bold text-neutral-900 mb-6 flex items-center gap-2">
+                                    <FileText className="text-primary-600" size={20} />
+                                    Medical History & Prescriptions
+                                </h3>
+                                <div className="space-y-4">
+                                    {pet.prescriptions.map((script) => (
+                                        <div key={script.id} className="bg-white p-4 rounded-xl border border-neutral-200">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <p className="font-semibold text-neutral-900">{script.diagnosis || "General Consultation"}</p>
+                                                    <p className="text-sm text-neutral-500">
+                                                        Dr. {script.doctor?.user?.fullName} • {new Date(script.createdAt).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                                    Prescription
+                                                </Badge>
+                                            </div>
+
+                                            {/* Medications */}
+                                            {script.medications && script.medications.length > 0 && (
+                                                <div className="mt-3 space-y-2">
+                                                    <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Medications</p>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                        {script.medications.map((med, idx) => (
+                                                            <div key={idx} className="flex items-center gap-2 text-sm bg-neutral-50 p-2 rounded">
+                                                                <Pill size={14} className="text-primary-500" />
+                                                                <span className="font-medium text-neutral-700">{med.name}</span>
+                                                                <span className="text-neutral-400">•</span>
+                                                                <span className="text-neutral-500">{med.dosage}</span>
+                                                                <span className="text-neutral-400">•</span>
+                                                                <span className="text-neutral-500">{med.frequency}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {script.instructions && (
+                                                <div className="mt-3">
+                                                    <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">Instructions</p>
+                                                    <p className="text-sm text-neutral-600">{script.instructions}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Sidebar: Action Card (4) */}

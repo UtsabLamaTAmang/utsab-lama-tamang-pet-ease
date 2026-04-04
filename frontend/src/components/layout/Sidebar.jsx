@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 
 export default function Sidebar({ items = [] }) {
     const location = useLocation();
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -53,7 +53,28 @@ export default function Sidebar({ items = [] }) {
             </div>
 
             {/* User Info / Footer */}
-            <div className="p-4 border-t border-neutral-100 flex flex-col gap-2">
+            <div className="p-4 border-t border-neutral-100 flex flex-col gap-1">
+                <Link
+                    to={`/${user?.role?.toLowerCase()}/settings`}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5 text-neutral-400"
+                    >
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    Settings
+                </Link>
                 <button
                     onClick={handleLogout}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full text-left"
@@ -61,9 +82,6 @@ export default function Sidebar({ items = [] }) {
                     <LogOut className="w-5 h-5" />
                     Log Out
                 </button>
-                <div className="bg-neutral-50 rounded-lg p-3">
-                    <p className="text-xs text-center text-neutral-400">© 2026 PetEase</p>
-                </div>
             </div>
         </aside>
     );

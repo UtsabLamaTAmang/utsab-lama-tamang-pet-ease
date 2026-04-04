@@ -20,6 +20,7 @@ import chatRoutes from "./routes/chatRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -70,6 +71,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/campaigns", campaignRoutes);
 
 // Socket.io Connection
 io.on("connection", (socket) => {
@@ -126,6 +128,13 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 });
+
+import startReminderService from "./services/reminderService.js";
+
+// ... existing imports ...
+
+// Initialize reminder service
+startReminderService();
 
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -228,12 +228,15 @@ export const getAllDoctors = async (req, res) => {
                 verificationStatus: true,
                 available: true,
                 createdAt: true,
+                licenseDocUrl: true,
+                degreeDocUrl: true,
+                licenseNumber: true,
                 user: {
                     select: {
                         id: true,
                         fullName: true,
-                        // email: true, // Maybe keep email hidden for public? Or show it? Usually contact form is better.
-                        // phone: true,
+                        email: true, 
+                        phone: true,
                     },
                 },
                 consultations: {
@@ -507,7 +510,7 @@ export const getUserConsultations = async (req, res) => {
     try {
         const userId = req.user.id;
         const userRole = req.user.role;
-        const { status } = req.query;
+        const { status, date, search } = req.query; // Added date, search
 
         let where = {};
 
@@ -519,7 +522,39 @@ export const getUserConsultations = async (req, res) => {
             where.userId = userId;
         }
 
-        if (status) where.status = status;
+        // Status Filter
+        if (status && status !== 'ALL') where.status = status;
+
+        // Date Filter
+        if (date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (date === 'today') {
+                where.appointmentDate = {
+                    gte: today,
+                    lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+                };
+            } else if (date === 'upcoming') {
+                where.appointmentDate = {
+                    gte: today
+                };
+            } else if (date === 'past') {
+                where.appointmentDate = {
+                    lt: today
+                };
+            }
+        }
+
+        // Search Filter (Link to User name)
+        if (search) {
+            where.user = {
+                fullName: {
+                    contains: search,
+                    mode: 'insensitive'
+                }
+            };
+        }
 
         const consultations = await prisma.consultation.findMany({
             where,
@@ -537,6 +572,7 @@ export const getUserConsultations = async (req, res) => {
                 },
                 user: {
                     select: {
+                        id: true,
                         fullName: true,
                         email: true,
                         phone: true,
@@ -633,8 +669,8 @@ export const updateConsultationStatus = async (req, res) => {
 // Create prescription
 export const createPrescription = async (req, res) => {
     try {
-        const { consultationId, medications, instructions, followUpDate } =
-            req.body;
+        const { consultationId, medications, instructions, followUpDate, diagnosis, petId } = req.body;
+        const doctorUserId = req.user.id; // Corrected: this is the User ID, we need Doctor ID
 
         if (!consultationId || !medications) {
             return res.status(400).json({
@@ -643,12 +679,27 @@ export const createPrescription = async (req, res) => {
             });
         }
 
+        // Use Prisma to find the Doctor record associated with this User
+        const doctor = await prisma.doctor.findUnique({
+            where: { userId: doctorUserId },
+        });
+
+        if (!doctor) {
+            return res.status(403).json({
+                success: false,
+                message: "Not authorized as a doctor",
+            });
+        }
+
         const prescription = await prisma.prescription.create({
             data: {
                 consultationId: parseInt(consultationId),
-                medications,
+                doctorId: doctor.id, // Use the Doctor ID
+                medications, // JSON
                 instructions,
+                diagnosis,
                 followUpDate: followUpDate ? new Date(followUpDate) : null,
+                petId: petId ? parseInt(petId) : null,
             },
             include: {
                 consultation: {
@@ -668,9 +719,20 @@ export const createPrescription = async (req, res) => {
                                 },
                             },
                         },
+                        
                     },
                 },
+                pet: true
             },
+        });
+
+        // Also update the consultation with diagnosis/notes if provided
+        await prisma.consultation.update({
+            where: { id: parseInt(consultationId) },
+            data: {
+                diagnosis: diagnosis,
+                status: 'COMPLETED' // Auto-complete consultation on prescription?
+            }
         });
 
         res.status(201).json({
@@ -1243,6 +1305,96 @@ export const getDoctorSlots = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to fetch slots",
+            error: error.message,
+        });
+    }
+};
+
+// Get all unique patients (pets) the doctor has had consultations with
+export const getDoctorPatients = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { search } = req.query;
+
+        const doctor = await prisma.doctor.findUnique({
+            where: { userId },
+        });
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: "Doctor profile not found",
+            });
+        }
+
+        // Get all consultations for this doctor that have an associated pet
+        const consultations = await prisma.consultation.findMany({
+            where: {
+                doctorId: doctor.id,
+                petId: { not: null }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        // Map to get the latest consultationId for each pet
+        const petToConsultationMap = {};
+        consultations.forEach(c => {
+            if (!petToConsultationMap[c.petId]) {
+                petToConsultationMap[c.petId] = c.id;
+            }
+        });
+
+        const petIds = Object.keys(petToConsultationMap).map(id => parseInt(id));
+
+        // Build the where clause for fetching the pets
+        let petWhere = { id: { in: petIds } };
+
+        if (search) {
+            petWhere.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { owner: { fullName: { contains: search, mode: 'insensitive' } } }
+            ];
+        }
+
+        // Fetch the unique pets and their owner details
+        const patients = await prisma.pet.findMany({
+            where: petWhere,
+            include: {
+                owner: {
+                    select: {
+                        id: true,
+                        fullName: true,
+                        email: true,
+                        phone: true,
+                        imageUrl: true
+                    }
+                },
+                prescriptions: {
+                    where: { doctorId: doctor.id },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1 // fetch only the most recent prescription for display
+
+                }
+            },
+            orderBy: { id: 'desc' }
+        });
+
+        // Attach the latest consultation ID so the frontend can easily issue prescriptions
+        const patientData = patients.map(p => ({
+            ...p,
+            latestConsultationId: petToConsultationMap[p.id]
+        }));
+
+        res.json({
+            success: true,
+            data: patientData
+        });
+
+    } catch (error) {
+        console.error("Get doctor patients error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch patients",
             error: error.message,
         });
     }

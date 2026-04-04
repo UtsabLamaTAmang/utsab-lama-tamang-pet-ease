@@ -90,7 +90,10 @@ export default function Topbar({ items = [] }) {
                             <div className="flex flex-col space-y-1">
                                 <p className="text-sm font-medium leading-none">{user?.fullName}</p>
                                 <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
-                                <p className="text-xs leading-none text-primary-600 font-medium mt-1 uppercase">{user?.role}</p>
+                                <div className="flex items-center justify-between mt-1">
+                                    <p className="text-xs leading-none text-primary-600 font-medium uppercase">{user?.role}</p>
+                                    <p className="text-xs font-bold text-amber-600">{user?.points || 0} pts</p>
+                                </div>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />

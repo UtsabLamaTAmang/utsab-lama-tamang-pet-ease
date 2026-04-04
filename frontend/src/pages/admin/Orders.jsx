@@ -168,51 +168,65 @@ export default function AdminOrders() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredOrders?.map((order) => (
-                            <TableRow key={order.id}>
-                                <TableCell className="font-medium">#{order.id}</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span className="font-medium">{order.user?.fullName}</span>
-                                        <span className="text-xs text-neutral-500">{order.user?.email}</span>
+                        {filteredOrders?.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="h-64 text-center">
+                                    <div className="flex flex-col items-center justify-center text-neutral-500 space-y-2">
+                                        <div className="w-16 h-16 bg-neutral-50 rounded-full flex items-center justify-center mb-2">
+                                            <Package className="w-8 h-8 text-neutral-400" />
+                                        </div>
+                                        <h3 className="text-lg font-medium text-neutral-900">No orders found</h3>
+                                        <p className="text-sm">There are currently no orders matching your criteria.</p>
                                     </div>
                                 </TableCell>
-                                <TableCell>{format(new Date(order.createdAt), 'MMM d, yyyy')}</TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className="font-normal">
-                                        {order.payment?.method}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="font-bold">Rs. {order.totalAmount.toLocaleString()}</TableCell>
-                                <TableCell>
-                                    <Select
-                                        defaultValue={order.status}
-                                        onValueChange={(val) => handleStatusChange(order.id, val)}
-                                        disabled={mutation.isPending || order.status === "DELIVERED" || order.status === "CANCELLED"} // Disable if finalized
-                                    >
-                                        <SelectTrigger className={`w-[130px] h-8 border-0 ${getStatusColor(order.status)}`}>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="PENDING">PENDING</SelectItem>
-                                            <SelectItem value="SHIPPED">SHIPPED</SelectItem>
-                                            <SelectItem value="DELIVERED">DELIVERED</SelectItem>
-                                            <SelectItem value="CANCELLED">CANCELLED</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <Eye className="w-4 h-4 text-neutral-500" />
-                                            </Button>
-                                        </DialogTrigger>
-                                        <OrderDetailsDialog order={order} />
-                                    </Dialog>
-                                </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            filteredOrders?.map((order) => (
+                                <TableRow key={order.id}>
+                                    <TableCell className="font-medium">#{order.id}</TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span className="font-medium">{order.user?.fullName}</span>
+                                            <span className="text-xs text-neutral-500">{order.user?.email}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{format(new Date(order.createdAt), 'MMM d, yyyy')}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className="font-normal">
+                                            {order.payment?.method}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="font-bold">Rs. {order.totalAmount.toLocaleString()}</TableCell>
+                                    <TableCell>
+                                        <Select
+                                            defaultValue={order.status}
+                                            onValueChange={(val) => handleStatusChange(order.id, val)}
+                                            disabled={mutation.isPending || order.status === "DELIVERED" || order.status === "CANCELLED"} // Disable if finalized
+                                        >
+                                            <SelectTrigger className={`w-[130px] h-8 border-0 ${getStatusColor(order.status)}`}>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="PENDING">PENDING</SelectItem>
+                                                <SelectItem value="SHIPPED">SHIPPED</SelectItem>
+                                                <SelectItem value="DELIVERED">DELIVERED</SelectItem>
+                                                <SelectItem value="CANCELLED">CANCELLED</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="ghost" size="icon">
+                                                    <Eye className="w-4 h-4 text-neutral-500" />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <OrderDetailsDialog order={order} />
+                                        </Dialog>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </div>

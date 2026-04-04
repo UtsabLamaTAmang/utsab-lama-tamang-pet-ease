@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node prisma/seed.js && nodemon index.js"
+    "start": "node prisma/seed.js && nodemon index.js",
+    "prod": "node index.js",
+    "postinstall": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "nodemailer": "^7.0.11",
     "nodemon": "^3.1.11",
     "prisma": "6.19.0",

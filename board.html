@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetEase - Official Project Board</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { margin: 0; padding: 40px; background-color: #0f172a; font-family: 'Inter', -apple-system, sans-serif; color: #f8fafc; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 { margin: 0; font-size: 2.5rem; color: #f1f5f9; }
+        .header p { color: #94a3b8; font-size: 1.1rem; }
+        .board-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
+        .card { background-color: #1e293b; border-radius: 12px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155; display: flex; flex-direction: column; gap: 16px; }
+        .card-header { font-size: 1.2rem; font-weight: 600; color: #f1f5f9; padding-bottom: 10px; border-bottom: 1px solid #334155; }
+        .item-list { display: flex; flex-direction: column; gap: 10px; }
+        .doc-item { background-color: #273548; border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 500; color: #cbd5e1; text-decoration: none; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; }
+        .doc-item:hover { background-color: #334155; color: #ffffff; border-color: #475569; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .doc-item svg { width: 18px; height: 18px; fill: #94a3b8; }
+        .doc-item:hover svg { fill: #f8fafc; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PetEase Official Project Board</h1>
+        <p>Complete 8-Sprint Tracking & Artifact Evidence Repository</p>
+    </div>
+    <div class="board-grid">
+        
+        <div class="card" style="border-top: 4px solid #94a3b8">
+            <div class="card-header">
+                Sprint 1 — Planning and Approval
+            </div>
+            <div class="item-list">
+                <a href="sprint1_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 1 Backlog
+                </a>
+                <a href="sprint1_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint1_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #64748b">
+            <div class="card-header">
+                Sprint 2 — Backlog and Design
+            </div>
+            <div class="item-list">
+                <a href="sprint2_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 2 Backlog
+                </a>
+                <a href="sprint2_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint2_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #f87171">
+            <div class="card-header">
+                Sprint 3 — Prototyping
+            </div>
+            <div class="item-list">
+                <a href="sprint3_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 3 Backlog
+                </a>
+                <a href="sprint3_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint3_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #38bdf8">
+            <div class="card-header">
+                Sprint 4 — Backend Development
+            </div>
+            <div class="item-list">
+                <a href="sprint4_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 4 Backlog
+                </a>
+                <a href="sprint4_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint4_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #4ade80">
+            <div class="card-header">
+                Sprint 5 — Frontend Development
+            </div>
+            <div class="item-list">
+                <a href="sprint5_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 5 Backlog
+                </a>
+                <a href="sprint5_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint5_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #facc15">
+            <div class="card-header">
+                Sprint 6 — Enhancements
+            </div>
+            <div class="item-list">
+                <a href="sprint6_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 6 Backlog
+                </a>
+                <a href="sprint6_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint6_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #c084fc">
+            <div class="card-header">
+                Sprint 7 — Testing
+            </div>
+            <div class="item-list">
+                <a href="sprint7_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 7 Backlog
+                </a>
+                <a href="sprint7_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint7_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #fb7185">
+            <div class="card-header">
+                Sprint 8 — Deployment
+            </div>
+            <div class="item-list">
+                <a href="sprint8_backlog.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Sprint 8 Backlog
+                </a>
+                <a href="sprint8_evidence.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Work Evidence
+                </a>
+                <a href="sprint8_resources.html" class="doc-item">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Resources Used
+                </a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

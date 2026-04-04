@@ -1,11 +1,23 @@
 import express from "express";
-import { getDashboardStats } from "../controllers/adminController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js"; // Assuming you have this
+import {
+    getDashboardStats,
+    getAllUsers,
+    updateUserRole,
+    toggleUserStatus
+} from "../controllers/adminController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Apply auth middleware to all admin routes
+router.use(protect, admin);
+
 // Get dashboard stats
-// TODO: Add admin role check middleware if available
-router.get("/stats", getDashboardStats);
+router.get("/dashboard-stats", getDashboardStats);
+
+// User Management
+router.get("/users", getAllUsers);
+router.patch("/users/:id/role", updateUserRole);
+router.patch("/users/:id/status", toggleUserStatus);
 
 export default router;

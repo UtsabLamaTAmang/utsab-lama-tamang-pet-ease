@@ -162,11 +162,17 @@ export default function Login() {
                                 Sign up
                             </Link>
                         </div>
-                        <div className="pt-2 border-t border-neutral-100 w-full">
+                        <div className="pt-2 flex flex-col sm:flex-row justify-center gap-4 border-t border-neutral-100 w-full">
                             <p className="text-xs text-neutral-500">
                                 Are you a doctor?{" "}
-                                <Link to="/doctor-signup" className="font-medium text-primary hover:text-primary/80 hover:underline">
+                                <Link to="/doctor-signup" className="font-medium text-blue-600 hover:text-blue-700 hover:underline">
                                     Join as a Specialist
+                                </Link>
+                            </p>
+                            <p className="text-xs text-neutral-500">
+                                Want to help pets?{" "}
+                                <Link to="/rescuer-signup" className="font-medium text-amber-600 hover:text-amber-700 hover:underline">
+                                    Become a Rescuer
                                 </Link>
                             </p>
                         </div>

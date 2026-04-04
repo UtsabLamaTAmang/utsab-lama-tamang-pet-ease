@@ -79,5 +79,17 @@ export const doctor = (req, res, next) => {
   }
 };
 
+// Rescuer middleware
+export const rescuer = (req, res, next) => {
+  if (req.user && (req.user.role === "RESCUER" || req.user.role === "ADMIN")) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: "Not authorized as rescuer",
+    });
+  }
+};
+
 // Legacy middleware for backward compatibility
 export const authMiddleware = protect;

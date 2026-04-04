@@ -23,6 +23,11 @@ enum UserRole {
   RESCUER
 }
 
+enum CampaignType {
+  VACCINATION
+  PET_DONATION
+}
+
 enum AdoptionStatus {
   PENDING
   APPROVED
@@ -62,11 +67,7 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum RescueReportStatus {
-  PENDING_REVIEW
-  APPROVED
-  REJECTED
-}
+
 
 enum RescueMissionStatus {
   ASSIGNED
@@ -87,6 +88,7 @@ model User {
   role         UserRole @default(USER)
   isVerified   Boolean  @default(false)
   imageUrl     String?
+  points       Int      @default(0)
 
   pets              Pet[]             @relation("UserPets")
   adoptionRequests  AdoptionRequest[]
@@ -97,6 +99,7 @@ model User {
   orders        Order[]
   payments      Payment[]
   rescueReports RescueReport[]
+  userBadges    UserBadge[]
 
   eventRegistrations EventRegistration[]
 
@@ -150,6 +153,8 @@ model Pet {
 
   adoptionRequests AdoptionRequest[]
   consultations    Consultation?     @relation(fields: [consultationId], references: [id])
+
+  prescriptions    Prescription[]
 
   createdAt      DateTime   @default(now())
   wishlists      Wishlist[]
@@ -237,6 +242,11 @@ model Consultation {
   appointmentDate DateTime? // Create slot reservation
   
   status ConsultationStatus @default(PENDING_PAYMENT)
+  
+  reminderSent Boolean @default(false)
+
+  diagnosis String?
+  notes     String?
 
   chat          Chat?
   prescriptions Prescription[]
@@ -283,7 +293,14 @@ model Prescription {
   doctor   Doctor @relation(fields: [doctorId], references: [id])
   doctorId Int
 
-  notes       String?
+  pet   Pet? @relation(fields: [petId], references: [id])
+  petId Int?
+
+  diagnosis    String?
+  medications  Json // Array of objects
+  instructions String?
+  followUpDate DateTime?
+
   documentUrl String?
 
   createdAt DateTime @default(now())
@@ -358,6 +375,7 @@ enum PaymentType {
   CONSULTATION
   DOCTOR_REGISTRATION
   ORDER
+  CAMPAIGN_DONATION
 }
 
 model Payment {
@@ -374,6 +392,9 @@ model Payment {
   order Order?
   doctor Doctor? @relation(fields: [doctorId], references: [id])
   doctorId Int?
+
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  campaignId Int?
 
   createdAt DateTime @default(now())
 }
@@ -443,10 +464,13 @@ model RescueReport {
   reporter   User @relation(fields: [reporterId], references: [id])
   reporterId Int
 
-  description  String
-  imageUrl     String?
-  locationText String
-  status       RescueReportStatus @default(PENDING_REVIEW)
+  description   String
+  location      String
+  petType       String?
+  urgency       String    @default("MEDIUM")
+  contactNumber String?
+  images        String[]  @default([])
+  status        String    @default("PENDING")
 
   createdAt DateTime @default(now())
 
@@ -467,4 +491,47 @@ model RescueMission {
 
   createdAt     DateTime       @default(now())
   rescueReports RescueReport[]
+}
+
+// --------------------------
+// BADGES
+// --------------------------
+model Badge {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  icon        String
+  threshold   Int
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  badgeId  Int
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+// --------------------------
+// CAMPAIGNS
+// --------------------------
+model Campaign {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  type        CampaignType
+  location    String
+  date        DateTime
+  imageUrl    String?
+  targetAmount Int          @default(0)
+  raisedAmount Int          @default(0)
+  status      String       @default("ACTIVE") // ACTIVE, COMPLETED
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  payments    Payment[]
 }

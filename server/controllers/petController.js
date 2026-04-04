@@ -10,7 +10,7 @@ export const getAllPets = async (req, res) => {
         const where = {};
 
         if (status) {
-            where.status = status;
+            where.status = status.toUpperCase();
         } else {
             // By default, show AVAILABLE and PENDING, but hide ADOPTED
             where.status = { not: "ADOPTED" };
@@ -139,6 +139,22 @@ export const getPetById = async (req, res) => {
                         },
                     },
                 },
+                prescriptions: {
+                    orderBy: {
+                        createdAt: 'desc'
+                    },
+                    include: {
+                        doctor: {
+                            include: {
+                                user: {
+                                    select: {
+                                        fullName: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
         });
 

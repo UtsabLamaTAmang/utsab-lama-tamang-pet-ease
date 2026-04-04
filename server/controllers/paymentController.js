@@ -132,7 +132,7 @@ export const verifyPayment = async (req, res) => {
                 data: { status: 'SUCCESS' }
             });
 
-            // Update linked Order if exists
+            // Re-fetch with relations
             const linkedPayment = await prisma.payment.findUnique({
                 where: { id: payment.id },
                 include: {
@@ -149,15 +149,32 @@ export const verifyPayment = async (req, res) => {
                 });
             }
 
+            // Handle campaign donation: update raisedAmount
+            if (linkedPayment.type === 'CAMPAIGN_DONATION' && linkedPayment.campaignId) {
+                await prisma.campaign.update({
+                    where: { id: linkedPayment.campaignId },
+                    data: {
+                        raisedAmount: {
+                            increment: linkedPayment.amount
+                        }
+                    }
+                });
+
+                return {
+                    success: true,
+                    message: "Donation successful! Thank you for your contribution.",
+                    isDonation: true,
+                    campaignId: linkedPayment.campaignId
+                };
+            }
+
             // If this was a doctor registration, auto-verify user (skip OTP)
             if (linkedPayment.type === 'DOCTOR_REGISTRATION') {
-                // Determine if we should also verify the User account (email verified)
                 await prisma.user.update({
                     where: { id: linkedPayment.user.id },
                     data: { isVerified: true }
                 });
 
-                // Auto-approve Doctor profile as requested
                 if (linkedPayment.doctor) {
                     await prisma.doctor.update({
                         where: { id: linkedPayment.doctor.id },
@@ -172,7 +189,7 @@ export const verifyPayment = async (req, res) => {
                 return {
                     success: true,
                     message: "Payment verified successfully. Doctor approved.",
-                    needsVerification: false // Skip OTP
+                    needsVerification: false
                 };
             }
 

@@ -133,12 +133,25 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const registerRescuer = async (fullName, email, phone, password) => {
+        try {
+            setError(null);
+            const response = await authAPI.registerRescuer(fullName, email, phone, password);
+            return { success: true, message: response.message, email: response.email };
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || err.message || "Registration failed";
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+    };
+
     const value = {
         user,
         loading,
         error,
         login,
         register,
+        registerRescuer,
         verifyOTP,
         resendOTP,
         logout,

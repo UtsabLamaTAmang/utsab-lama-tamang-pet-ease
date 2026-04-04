@@ -58,6 +58,31 @@ export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDocto
     const { user } = doctor;
     const baseURL = "http://localhost:5000";
 
+    let parsedDays = "N/A";
+    let parsedHours = "N/A";
+
+    try {
+        if (doctor.availableDays) {
+            const daysArr = JSON.parse(doctor.availableDays);
+            parsedDays = Array.isArray(daysArr) ? daysArr.join(", ") : doctor.availableDays;
+        }
+    } catch (e) {
+        parsedDays = doctor.availableDays;
+    }
+
+    try {
+        if (doctor.availableHours) {
+            const hoursObj = JSON.parse(doctor.availableHours);
+            if (hoursObj && hoursObj.start && hoursObj.end) {
+                parsedHours = `${hoursObj.start} - ${hoursObj.end}`;
+            } else {
+                parsedHours = doctor.availableHours;
+            }
+        }
+    } catch (e) {
+        parsedHours = doctor.availableHours;
+    }
+
     return (
         <Dialog open={open} onOpenChange={(val) => {
             if (!val) setSelectedImage(null);
@@ -175,11 +200,11 @@ export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDocto
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-100 text-center">
                                                     <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest block mb-1">Days</span>
-                                                    <span className="font-semibold text-neutral-900">{doctor.availableDays || "N/A"}</span>
+                                                    <span className="font-semibold text-neutral-900 overflow-hidden text-ellipsis line-clamp-2" title={parsedDays}>{parsedDays}</span>
                                                 </div>
                                                 <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-100 text-center">
                                                     <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest block mb-1">Hours</span>
-                                                    <span className="font-semibold text-neutral-900">{doctor.availableHours || "N/A"}</span>
+                                                    <span className="font-semibold text-neutral-900">{parsedHours}</span>
                                                 </div>
                                             </div>
                                         </SectionCard>
@@ -203,13 +228,13 @@ export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDocto
                                         title="Medical License"
                                         url={doctor.licenseDocUrl}
                                         baseURL={baseURL}
-                                        onView={() => doctor.licenseDocUrl && setSelectedImage(`${baseURL}${doctor.licenseDocUrl}`)}
+                                        onView={() => doctor.licenseDocUrl && window.open(`${baseURL}${doctor.licenseDocUrl}`, '_blank', 'noopener,noreferrer')}
                                     />
                                     <DocumentPreview
                                         title="Degree Certificate"
                                         url={doctor.degreeDocUrl}
                                         baseURL={baseURL}
-                                        onView={() => doctor.degreeDocUrl && setSelectedImage(`${baseURL}${doctor.degreeDocUrl}`)}
+                                        onView={() => doctor.degreeDocUrl && window.open(`${baseURL}${doctor.degreeDocUrl}`, '_blank', 'noopener,noreferrer')}
                                     />
                                 </div>
                             </TabsContent>
