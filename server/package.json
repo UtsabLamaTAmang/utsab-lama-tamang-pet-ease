@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node prisma/seed.js && nodemon index.js",
+    "start": "node prisma/seed.js && nodemon api/index.js",
     "prod": "node index.js",
     "postinstall": "npx prisma generate"
   },
