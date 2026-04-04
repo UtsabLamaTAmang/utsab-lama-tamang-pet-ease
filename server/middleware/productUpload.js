@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 // Ensure upload directory exists
 const uploadDir = path.join(process.cwd(), 'uploads/products');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+    // fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configure storage

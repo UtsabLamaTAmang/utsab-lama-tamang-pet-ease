@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, '../uploads/doctor-documents');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+    // fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configure storage
