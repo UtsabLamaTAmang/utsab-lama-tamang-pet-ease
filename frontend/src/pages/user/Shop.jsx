@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,8 +13,6 @@ import { Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { useDebounce } from '@/hooks/useDebounce';
 
-const API_BASE_URL = "http://localhost:5000/api";
-
 const CATEGORIES = ["Food", "Toys", "Accessories", "Medicine", "Grooming"];
 
 const fetchProducts = async ({ queryKey }) => {
@@ -27,7 +25,7 @@ const fetchProducts = async ({ queryKey }) => {
     if (sortBy) params.append('sortBy', sortBy);
     if (sortOrder) params.append('order', sortOrder);
 
-    const response = await axios.get(`${API_BASE_URL}/store/products?${params.toString()}`);
+    const response = await apiClient.get(`/store/products?${params.toString()}`);
     return response.data.data;
 };
 

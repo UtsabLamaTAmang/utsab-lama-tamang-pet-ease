@@ -371,6 +371,8 @@ export const bookConsultation = async (req, res) => {
             });
         }
 
+        const calculatedAmount = doctor.fee || 0;
+
         // Check if slot is taken
         const existing = await prisma.consultation.findFirst({
             where: {

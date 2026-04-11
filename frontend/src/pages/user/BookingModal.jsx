@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { SimpleCalendar } from "@/components/ui/SimpleCalendar";
 import { format } from "date-fns";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { toast } from "react-hot-toast";
 
 export default function BookingModal({ doctor, isOpen, onClose }) {
@@ -29,8 +29,8 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
         try {
             // API expects format YYYY-MM-DD
             const formattedDate = format(date, "yyyy-MM-dd");
-            const response = await axios.get(
-                `http://localhost:5000/api/doctors/${doctor.id}/slots?date=${formattedDate}&duration=${duration}`
+            const response = await apiClient.get(
+                `/doctors/${doctor.id}/slots?date=${formattedDate}&duration=${duration}`
             );
             if (response.data.success) {
                 setSlots(response.data.data);
@@ -50,17 +50,14 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
         if (!selectedSlot || !doctor) return;
         setBooking(true);
         try {
-            const response = await axios.post(
-                "http://localhost:5000/api/doctors/consultations",
+            const response = await apiClient.post(
+                "/doctors/consultations",
                 {
                     doctorId: doctor.id,
                     appointmentDate: selectedSlot,
                     duration: duration,
                     paymentMethod: "CASH", // Simplified for now
                     // petId, symptoms etc can be added later
-                },
-                {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }
             );
             toast.success("Appointment booked successfully!");

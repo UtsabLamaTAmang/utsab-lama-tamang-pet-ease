@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { format } from 'date-fns';
 import { Calendar, Clock, MessageSquare, Star, X, Activity, CheckCircle2, XCircle, AlertCircle, Stethoscope } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -270,10 +270,7 @@ export default function Appointments() {
 
     const fetchAppointments = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/doctors/consultations', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.get('/doctors/consultations');
             if (response.data.success) setAppointments(response.data.data);
         } catch (err) {
             toast.error('Failed to load appointments');
@@ -286,11 +283,9 @@ export default function Appointments() {
         if (!selectedApt) return;
         setSubmittingRating(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.patch(
-                `http://localhost:5000/api/doctors/consultations/${selectedApt.id}/rate`,
-                { rating, review },
-                { headers: { Authorization: `Bearer ${token}` } }
+            const res = await apiClient.patch(
+                `/doctors/consultations/${selectedApt.id}/rate`,
+                { rating, review }
             );
             if (res.data.success) {
                 toast.success('Thank you for your review! 🌟');

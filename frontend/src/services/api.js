@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api";
+// const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://utsab-lama-tamang-pet-ease-wibz.vercel.app/api";
 
 // Create axios instance with default config
 const api = axios.create({
@@ -9,6 +10,8 @@ const api = axios.create({
         "Content-Type": "application/json",
     },
 });
+
+export const apiClient = api;
 
 // Request interceptor to add auth token
 api.interceptors.request.use(

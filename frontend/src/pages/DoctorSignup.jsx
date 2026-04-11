@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { paymentAPI } from "@/services/api";
-import axios from "axios";
+import { apiClient, paymentAPI } from "@/services/api";
 
 import { Button } from "@/components/ui/button";
 
@@ -96,7 +95,7 @@ export default function DoctorSignup() {
 
             // 1. Register Doctor (Creates Account + Profile)
             // const regResponse = await doctorAPI.register(formDataToSend);
-            const { data: regResponse } = await axios.post("http://localhost:5000/api/doctors/register", formDataToSend, {
+            const { data: regResponse } = await apiClient.post("/doctors/register", formDataToSend, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 

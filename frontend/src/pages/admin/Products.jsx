@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTableData } from '@/hooks/useTableData';
 import { DataTable } from '@/components/common/DataTable';
@@ -14,23 +14,10 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Search, Edit, Trash2, Package, X, Upload, Image as ImageIcon } from 'lucide-react';
 
-const API_BASE_URL = "http://localhost:5000/api";
-
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: { "Content-Type": "application/json" },
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
-
 // Fetch function for products
 const fetchProducts = async (params) => {
     const { signal, ...queryParams } = params;
-    const response = await api.get('/store/products', {
+    const response = await apiClient.get('/store/products', {
         params: queryParams,
         signal
     });
@@ -135,8 +122,8 @@ export default function Products() {
 
     const createProductMutation = useMutation({
         mutationFn: async (data) => {
-            const response = await api.post("/store/products", data, {
-                headers: { "Content-Type": undefined }
+            const response = await apiClient.post("/store/products", data, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
             return response.data;
         },
@@ -151,8 +138,8 @@ export default function Products() {
 
     const updateProductMutation = useMutation({
         mutationFn: async ({ id, data }) => {
-            const response = await api.put(`/store/products/${id}`, data, {
-                headers: { "Content-Type": undefined }
+            const response = await apiClient.put(`/store/products/${id}`, data, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
             return response.data;
         },
@@ -167,7 +154,7 @@ export default function Products() {
 
     const deleteProductMutation = useMutation({
         mutationFn: async (id) => {
-            const response = await api.delete(`/store/products/${id}`);
+            const response = await apiClient.delete(`/store/products/${id}`);
             return response.data;
         },
         onSuccess: () => {

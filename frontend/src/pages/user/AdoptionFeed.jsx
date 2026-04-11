@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -49,7 +49,7 @@ const fetchPets = async ({ queryKey }) => {
     queryParams.append('page', page);
     queryParams.append('limit', 9);
 
-    const response = await axios.get(`http://localhost:5000/api/pets?${queryParams.toString()}`);
+    const response = await apiClient.get(`/pets?${queryParams.toString()}`);
     return response.data;
 };
 

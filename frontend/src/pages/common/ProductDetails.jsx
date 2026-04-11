@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowLeft, ShoppingCart, Heart, Share2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-
-const API_BASE_URL = "http://localhost:5000/api";
 
 export default function ProductDetails() {
     const { id } = useParams();
@@ -18,7 +16,7 @@ export default function ProductDetails() {
     const { data: product, isLoading, isError } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => {
-            const res = await axios.get(`${API_BASE_URL}/store/products/${id}`);
+            const res = await apiClient.get(`/store/products/${id}`);
             return res.data; // Assuming backend endpoint returns product object directly or inside data
         }
     });

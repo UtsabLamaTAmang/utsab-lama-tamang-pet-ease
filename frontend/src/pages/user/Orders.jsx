@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -10,13 +10,8 @@ import { format, addDays } from 'date-fns';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-const API_BASE_URL = "http://localhost:5000/api";
-
 const fetchOrders = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_BASE_URL}/orders/myorders`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await apiClient.get('/orders/myorders');
     return response.data;
 };
 

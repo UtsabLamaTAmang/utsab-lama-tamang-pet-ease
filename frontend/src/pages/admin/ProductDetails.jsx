@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowLeft, Edit, Trash2, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
@@ -12,18 +12,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-
-const API_BASE_URL = "http://localhost:5000/api";
-
-const api = axios.create({
-    baseURL: API_BASE_URL,
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
 
 export default function AdminProductDetails() {
     const { id } = useParams();
@@ -36,15 +24,15 @@ export default function AdminProductDetails() {
     const { data: product, isLoading, isError, refetch } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => {
-            const res = await api.get(`/store/products/${id}`);
+            const res = await apiClient.get(`/store/products/${id}`);
             return res.data.data;
         }
     });
 
     const updateProductMutation = useMutation({
         mutationFn: async (data) => {
-            const response = await api.put(`/store/products/${id}`, data, {
-                headers: { "Content-Type": undefined } // Let browser set boundary
+            const response = await apiClient.put(`/store/products/${id}`, data, {
+                headers: { "Content-Type": "multipart/form-data" } // Let browser set boundary
             });
             return response.data;
         },
@@ -59,7 +47,7 @@ export default function AdminProductDetails() {
 
     const deleteProductMutation = useMutation({
         mutationFn: async () => {
-            await api.delete(`/store/products/${id}`);
+            await apiClient.delete(`/store/products/${id}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['products']);

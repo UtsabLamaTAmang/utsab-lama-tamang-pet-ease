@@ -32,15 +32,7 @@ import {
     Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api";
-const api = axios.create({ baseURL: API_BASE_URL });
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
+import { apiClient } from "@/services/api";
 
 export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDoctorUpdated }) {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -260,7 +252,7 @@ export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDocto
                                         label: "Deactivate",
                                         variant: "destructive",
                                         action: () => {
-                                            api.put(`/doctors/admin/deactivate/${doctor.id}`)
+                                            apiClient.put(`/doctors/admin/deactivate/${doctor.id}`)
                                                 .then(() => { onDoctorUpdated && onDoctorUpdated(); onOpenChange(false); })
                                                 .catch(() => alert("Failed to deactivate")); // Keeping basic alert for error as requested change was for CONFIRMATIONS
                                         }
@@ -284,7 +276,7 @@ export default function DoctorDetailsModal({ doctor, open, onOpenChange, onDocto
                                         label: action === 'approve' ? 'Approve & Verify' : 'Reactivate',
                                         variant: "default",
                                         action: () => {
-                                            api.put(`/doctors/admin/reactivate/${doctor.id}`)
+                                            apiClient.put(`/doctors/admin/reactivate/${doctor.id}`)
                                                 .then(() => { onDoctorUpdated && onDoctorUpdated(); onOpenChange(false); })
                                                 .catch(() => alert("Failed to update status"));
                                         }

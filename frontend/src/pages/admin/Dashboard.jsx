@@ -1,20 +1,11 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Stethoscope, Package, PawPrint, Ambulance, TrendingUp, AlertCircle, Loader2 } from "lucide-react";
 
-// API setup
-const API_BASE_URL = "http://localhost:5000/api";
-const api = axios.create({ baseURL: API_BASE_URL });
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
-
 const fetchDashboardStats = async () => {
-    const response = await api.get('/admin/dashboard-stats');
+    const response = await apiClient.get('/admin/dashboard-stats');
     return response.data.stats;
 };
 

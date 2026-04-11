@@ -8,10 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { toast } from 'react-hot-toast';
-
-const API_BASE_URL = "http://localhost:5000/api";
 
 const CheckoutModal = ({ isOpen, onClose, totalAmount, onSuccess }) => {
     const [loading, setLoading] = useState(false);
@@ -26,11 +24,9 @@ const CheckoutModal = ({ isOpen, onClose, totalAmount, onSuccess }) => {
         setLoading(true);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${API_BASE_URL}/orders/checkout`,
-                formData,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const response = await apiClient.post(
+                '/orders/checkout',
+                formData
             );
 
             if (response.data.success) {

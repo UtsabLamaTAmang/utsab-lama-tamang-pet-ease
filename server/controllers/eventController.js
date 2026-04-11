@@ -10,7 +10,7 @@ export const getAllEvents = async (req, res) => {
         const where = {};
         if (category) where.category = category;
         if (upcoming === "true") {
-            where.eventDate = {
+            where.date = {
                 gte: new Date(),
             };
         }
@@ -21,21 +21,18 @@ export const getAllEvents = async (req, res) => {
                 registrations: {
                     select: {
                         id: true,
-                        status: true,
                     },
                 },
             },
             orderBy: {
-                eventDate: "asc",
+                date: "asc",
             },
         });
 
         // Add registration count
         const eventsWithCount = events.map((event) => ({
             ...event,
-            registeredCount: event.registrations.filter(
-                (r) => r.status === "CONFIRMED"
-            ).length,
+            registeredCount: event.registrations.length,
         }));
 
         res.json({
@@ -101,18 +98,15 @@ export const createEvent = async (req, res) => {
         const {
             title,
             description,
-            eventDate,
+            date,
             location,
-            category,
-            maxParticipants,
-            registrationFee,
-            coverImage,
+            imageUrl,
         } = req.body;
 
-        if (!title || !eventDate || !location) {
+        if (!title || !date || !location) {
             return res.status(400).json({
                 success: false,
-                message: "Title, event date, and location are required",
+                message: "Title, date, and location are required",
             });
         }
 
@@ -120,12 +114,9 @@ export const createEvent = async (req, res) => {
             data: {
                 title,
                 description,
-                eventDate: new Date(eventDate),
+                date: new Date(date),
                 location,
-                category,
-                maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
-                registrationFee: registrationFee ? parseFloat(registrationFee) : 0,
-                coverImage,
+                imageUrl: imageUrl || null,
             },
         });
 
@@ -196,7 +187,7 @@ export const deleteEvent = async (req, res) => {
 export const registerForEvent = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { eventId, numberOfGuests, specialRequests } = req.body;
+        const { eventId } = req.body;
 
         if (!eventId) {
             return res.status(400).json({
@@ -208,13 +199,7 @@ export const registerForEvent = async (req, res) => {
         // Check if event exists
         const event = await prisma.event.findUnique({
             where: { id: parseInt(eventId) },
-            include: {
-                registrations: {
-                    where: {
-                        status: "CONFIRMED",
-                    },
-                },
-            },
+            include: { registrations: true },
         });
 
         if (!event) {
@@ -224,23 +209,11 @@ export const registerForEvent = async (req, res) => {
             });
         }
 
-        // Check if event is full
-        if (
-            event.maxParticipants &&
-            event.registrations.length >= event.maxParticipants
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Event is full",
-            });
-        }
-
         // Check if user already registered
         const existingRegistration = await prisma.eventRegistration.findFirst({
             where: {
                 userId,
                 eventId: parseInt(eventId),
-                status: { not: "CANCELLED" },
             },
         });
 
@@ -256,28 +229,11 @@ export const registerForEvent = async (req, res) => {
             data: {
                 userId,
                 eventId: parseInt(eventId),
-                numberOfGuests: numberOfGuests ? parseInt(numberOfGuests) : 1,
-                specialRequests,
-                status: "CONFIRMED",
             },
             include: {
                 event: true,
             },
         });
-
-        // Create payment if there's a fee
-        if (event.registrationFee > 0) {
-            await prisma.payment.create({
-                data: {
-                    userId,
-                    amount: event.registrationFee,
-                    paymentMethod: "ONLINE",
-                    status: "PENDING",
-                    type: "EVENT",
-                    eventRegistrationId: registration.id,
-                },
-            });
-        }
 
         res.status(201).json({
             success: true,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,21 +24,13 @@ import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-const API_BASE_URL = "http://localhost:5000/api";
-
 const fetchAllOrders = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_BASE_URL}/orders/all`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await apiClient.get('/orders/all');
     return response.data;
 };
 
 const updateOrderStatus = async ({ id, status }) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.put(`${API_BASE_URL}/orders/${id}/status`, { status }, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await apiClient.put(`/orders/${id}/status`, { status });
     return response.data;
 };
 

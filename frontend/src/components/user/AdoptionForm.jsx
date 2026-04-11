@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,10 +58,7 @@ export default function AdoptionForm({ onSuccess, onCancel }) {
 
     const mutation = useMutation({
         mutationFn: async (data) => {
-            const token = localStorage.getItem("token");
-            return axios.post("http://localhost:5000/api/pets", { ...data, images: [] }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            return apiClient.post("/pets", { ...data, images: [] });
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['pets']);

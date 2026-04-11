@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Send, X, ArrowLeft, Sparkles, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AIChatWindow({ isOpen, onClose, onBack, embedded }) {
@@ -37,9 +37,8 @@ export default function AIChatWindow({ isOpen, onClose, onBack, embedded }) {
             // Frontend history for context (last 10 messages)
             const history = messages.slice(-10).map(m => ({ role: m.role, text: m.text }));
 
-            const response = await axios.post("http://localhost:5000/api/ai/chat",
-                { message: userMessage.text, history },
-                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+            const response = await apiClient.post("/ai/chat",
+                { message: userMessage.text, history }
             );
 
             if (response.data.success) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { toast } from "react-hot-toast";
 
 const DoctorSchedule = () => {
@@ -27,9 +27,7 @@ const DoctorSchedule = () => {
 
     const fetchAvailability = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/api/doctors/profile", {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
+            const response = await apiClient.get("/doctors/profile");
             const data = response.data.data;
             if (data) {
                 setAvailable(data.available !== undefined ? data.available : true);
@@ -55,15 +53,12 @@ const DoctorSchedule = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await axios.put(
-                "http://localhost:5000/api/doctors/availability",
+            await apiClient.put(
+                "/doctors/availability",
                 {
                     availableDays: days,
                     availableHours: hours,
                     available,
-                },
-                {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }
             );
             toast.success("Schedule updated successfully");

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
+
 import { 
     Search, 
     User, 
@@ -17,15 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = "http://localhost:5000/api";
 const baseURL = "http://localhost:5000";
-
-const api = axios.create({ baseURL: API_BASE_URL });
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
 
 export default function DoctorPatients() {
     const [patients, setPatients] = useState([]);
@@ -48,7 +41,7 @@ export default function DoctorPatients() {
     const fetchPatients = async (search = '') => {
         try {
             setLoading(true);
-            const { data } = await api.get(`/doctors/patients?search=${search}`);
+            const { data } = await apiClient.get(`/doctors/patients?search=${search}`);
             if (data.success) {
                 setPatients(data.data);
             }
@@ -108,7 +101,7 @@ export default function DoctorPatients() {
                 medications: medications // sending as array of objects
             };
 
-            const { data } = await api.post('/doctors/prescriptions', payload);
+            const { data } = await apiClient.post('/doctors/prescriptions', payload);
             
             if (data.success) {
                 toast.success('Prescription created successfully!');

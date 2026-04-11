@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { toast } from 'react-hot-toast';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,12 +51,9 @@ export default function DoctorSettings() {
         setPasswordLoading(true);
         try {
             // Reusing the same authAPI endpoint for doctors since it uses user.id under the hood
-            const token = localStorage.getItem('token');
-            const response = await axios.put('http://localhost:5000/api/auth/change-password', {
+            const response = await apiClient.put('/auth/change-password', {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.data.message) {
@@ -85,10 +82,7 @@ export default function DoctorSettings() {
 
     const fetchProfile = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/doctors/profile', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.get('/doctors/profile');
             if (response.data.success) {
                 const data = response.data.data;
                 setProfile({
@@ -112,13 +106,10 @@ export default function DoctorSettings() {
     const handleUpdate = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.put('http://localhost:5000/api/doctors/profile', {
+            const response = await apiClient.put('/doctors/profile', {
                 ...profile,
                 availableDays: JSON.stringify(profile.availableDays),
                 availableHours: JSON.stringify(profile.availableHours)
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.data.success) {

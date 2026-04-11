@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { apiClient } from "@/services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +18,7 @@ const fetchDoctors = async ({ queryKey }) => {
     queryParams.append('status', 'APPROVED'); // Only show approved doctors
     queryParams.append('page', page);
 
-    const response = await axios.get(`http://localhost:5000/api/doctors?${queryParams.toString()}`);
+    const response = await apiClient.get(`/doctors?${queryParams.toString()}`);
     return response.data;
 };
 

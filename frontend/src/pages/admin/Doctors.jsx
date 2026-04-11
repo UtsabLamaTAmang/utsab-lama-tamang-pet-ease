@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 import { useTableData } from '@/hooks/useTableData';
 import { DataTable } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
@@ -10,22 +10,10 @@ import { Search, X, Star, Eye } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import DoctorDetailsModal from '@/components/admin/DoctorDetailsModal';
 
-const API_BASE_URL = "http://localhost:5000/api";
-
-const api = axios.create({
-    baseURL: API_BASE_URL,
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
-
 // Fetch function for doctors
 const fetchDoctors = async (params) => {
     const { signal, ...queryParams } = params;
-    const response = await api.get("/doctors", {
+    const response = await apiClient.get("/doctors", {
         params: queryParams,
         signal
     });
