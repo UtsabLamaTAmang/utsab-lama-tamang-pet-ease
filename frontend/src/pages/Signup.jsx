@@ -15,7 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AuthShell from "@/components/auth/AuthShell";
+import AuthShell from "@/components/auth/authShell";
 
 export default function Signup() {
     const { register, verifyOTP, resendOTP } = useAuth();
@@ -130,11 +130,10 @@ export default function Signup() {
             <div className="space-y-5">
                 {error && (
                     <div
-                        className={`flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium ${
-                            messageTone === "success"
-                                ? "border border-success-200 bg-success-50 text-success-700"
-                                : "border border-danger-200 bg-danger-50 text-danger-700"
-                        }`}
+                        className={`flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium ${messageTone === "success"
+                            ? "border border-success-200 bg-success-50 text-success-700"
+                            : "border border-danger-200 bg-danger-50 text-danger-700"
+                            }`}
                     >
                         {messageTone === "success" ? (
                             <CheckCircle2 className="h-4 w-4 shrink-0" />

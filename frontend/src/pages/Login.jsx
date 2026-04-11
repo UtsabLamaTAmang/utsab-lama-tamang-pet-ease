@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AuthShell from "@/components/auth/AuthShell";
+import AuthShell from "@/components/auth/authShell";
 
 export default function Login() {
     const { login } = useAuth();
