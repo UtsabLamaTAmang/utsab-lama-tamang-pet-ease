@@ -51,7 +51,7 @@ export default function DoctorDashboard() {
                         <p className="text-xs text-neutral-500">with Fluffy (Dog)</p>
                     </CardContent>
                 </Card>
-                <Card className="hover:shadow-md transition-all cursor-pointer bg-indigo-50 border-indigo-100" onClick={() => window.location.href = '/doctor/schedule'}>
+                <Card className="hover:shadow-md transition-all cursor-pointer bg-indigo-50 border-indigo-100" onClick={() => window.location.href = '/doctor/settings'}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-indigo-900">Availability</CardTitle>
                         <Clock className="h-4 w-4 text-indigo-600" />

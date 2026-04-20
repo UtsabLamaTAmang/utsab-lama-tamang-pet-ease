@@ -152,7 +152,7 @@ export const registerRescuer = async (req, res) => {
 };
 
 /**
- * LOGIN USER
+ * LOGIN Admin
  */
 export const login = async (req, res) => {
   try {

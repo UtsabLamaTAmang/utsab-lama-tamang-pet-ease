@@ -9,7 +9,7 @@ import {
 } from "../controllers/petController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
-const router = express.Router();
+const   router = express.Router();
 
 // Public routes
 router.get("/", getAllPets);

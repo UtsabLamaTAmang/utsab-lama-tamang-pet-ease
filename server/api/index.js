@@ -33,7 +33,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: ["http://localhost:5173","https://utsab-lama-tamang-pet-ease.vercel.app/"], // Frontend URL
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST, PUT, DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
   },
@@ -82,15 +82,15 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} joined room: ${room}`);
   });
 
-app.use(
-  '/docs',
-  apiReference({
-    cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference', // Ensures UI loads correctly on Vercel
-    spec: {
-      content: swaggerSpec,
-    },
-  })
-);
+// app.use(
+//   '/docs',
+//   apiReference({
+//     cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference', // Ensures UI loads correctly on Vercel
+//     spec: {
+//       content: swaggerSpec,
+//     },
+//   })
+// );
 
   socket.on("send_message", async (data) => {
     // data: { roomId, senderId, message, timestamp, senderName }
